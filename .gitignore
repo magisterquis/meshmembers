@@ -1,3 +1,4 @@
 .*.swp
 meshmembers
 meshmembers.*.*
+cloud-init.mine.yaml
