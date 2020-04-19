@@ -110,7 +110,7 @@ perl -e '@l=grep{/\(.*\)$/}split/\n/,`nc -Uw1 /tmp/.meshmembers.sock | sort -R`;
 
 The tweakable bits are
 - `/tmp/.meshmembers.sock` - MeshMembers Unix socket
-- `3>$#l` (specifically 3) - The number of hosts to hop through before the
+- `3>$#l` (specifically, the `3`) - The number of hosts to hop through before the
    final host. The `2` in `$#l=2` needs to be changes to one fewer than the
    number of hops
 - `~/.ssh/mmconfig` - SSH config file
