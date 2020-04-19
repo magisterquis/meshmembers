@@ -48,7 +48,7 @@ Initial Peer
 ------------
 At least one other member of the mesh must be know ahead of time to join an
 existing mesh, and must be specified with `-peers`.  If none are given,
-meshmembers will listen for incoming connections.
+MeshMembers will listen for incoming connections.
 
 Secret
 ------
@@ -64,7 +64,7 @@ platform, MAC address, and current time.  A name may be set with `-name`.
 
 Addresses
 ---------
-The address on which meshmembers listens for new connections (`-listen`) need
+The address on which MeshMembers listens for new connections (`-listen`) need
 not be the same as the address advertised for incoming connections
 (`-external`).  This is helpful when there's inbound natting (e.g. EC2).  The
 same port (`-port`) is used for both and is used for both TCP and UDP.  The
@@ -72,11 +72,11 @@ port does not have to be the same for all members of the mesh.
 
 Local Clients
 -------------
-Aside from the logging done by meshmebers to stdout, meshmembers can send a
+Aside from the logging done by meshmebers to stdout, MeshMembers can send a
 list of nodes it knows about via a Unix socket (`-socket`).  New nodes joining
 and leaving the network will also be reported via the socket.
 
-If meshmembers is started with `-socket /tmp/.meshmembers.sock`:
+If MeshMembers is started with `-socket /tmp/.meshmembers.sock`:
 ```
 $ nc -U /tmp/.meshmembers.sock
 Current nodes in mesh: 5
@@ -91,10 +91,40 @@ linux-amd64-62:7f:3b:ba:41:63-c24tmfrtznfu (100.64.5.132:7887)
 This shows a mesh which had 5 nodes when the connection was initially made to
 the unix socket plus another which joined afterwards.
 
+SSH Tunnels
+-----------
+The below perl one-liner is useful for tunneling through a three of the boxes
+in the mesh.  It assumes an SSH config similar to
+```
+ControlMaster no
+User hop
+StrictHostKeyChecking accept-new
+DynamicForward 5555
+```
+
+###One-liner:
+
+```perl -e '@l=grep{/\(.*\)$/}split/\n/,`nc -Uw1 /tmp/.meshmembers.sock | sort -R`;s/^.*\(|:\d+\)//g for@l;die"Not enough nodes"if 3>$#l;$t=pop@l;$#l=2;$c=sprintf"ssh -v -N -F ~/.ssh/mmconfig -J %s %s",join(",",@l),$t;print$c,$/;exec$c'
+```
+
+The tweakable bits are
+- `/tmp/.meshmembers.sock` - MeshMembers Unix socket
+- `3>$#l` (specifically 3) - The number of hosts to hop through before the
+   final host. The `2` in `$#l=2` needs to be changes to one fewer than the
+   number of hops
+- `~/.ssh/mmconfig` - SSH config file
+
+On second thought, this would have been better as a script.
+
 Testing
 -------
 For ease of testing, a skeleton of a
 [cloud-init](https://cloudinit.readthedocs.io/en/latest/) file is included
-in this repo.  A binary will need to be built and hosted somewhere and an
-initial peer started before using it.  The config makes a user named `hop` with
-an SSH key meant to be used for tunneling SSH.
+in this repo an [`cloud-init.yaml`](./cloud-init.yaml).  A MeshMembers binary
+will need to be built and hosted somewhere and an initial peer started before
+using it.  The config makes a user named `hop` with an SSH key meant to be used
+for tunneling SSH.  
+
+A script, [`docreate.sh`](./docreate.sh), which wraps DigitalOcean's `doctl` is
+provided to help set up a test mesh in DigitalOcean.
+
