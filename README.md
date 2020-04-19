@@ -105,12 +105,12 @@ DynamicForward 5555
 ### One-liner:
 
 ```
-perl -e '@l=grep{/\(.*\)$/}split/\n/,`nc -Uw1 /tmp/.meshmembers.sock | sort -R`;s/^.*\(|:\d+\)//g for@l;die"Not enough nodes"if 3>$#l;$t=pop@l;$#l=2;$c=sprintf"ssh -v -N -F ~/.ssh/mmconfig -J %s %s",join(",",@l),$t;print$c,$/;exec$c'
+perl -e '@l=grep{/\(.*\)$/}split/\n/,`nc -Uw1 /tmp/.meshmembers.sock | sort -R`;s/^.*\(|:\d+\)//g for@l;die"Not enough nodes"if$#l<3;$t=pop@l;$#l=2;$c=sprintf"ssh -v -N -F ~/.ssh/mmconfig -J %s %s",join(",",@l),$t;print$c,$/;exec$c'
 ```
 
 The tweakable bits are
 - `/tmp/.meshmembers.sock` - MeshMembers Unix socket
-- `3>$#l` (specifically, the `3`) - The number of hosts to hop through before the
+- `$#l<3` (specifically, the `3`) - The number of hosts to hop through before the
    final host. The `2` in `$#l=2` needs to be changes to one fewer than the
    number of hops
 - `~/.ssh/mmconfig` - SSH config file
