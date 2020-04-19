@@ -72,9 +72,9 @@ port does not have to be the same for all members of the mesh.
 
 Local Clients
 -------------
-Aside from the logging done by meshmebers to stdout, MeshMembers can send a
-list of nodes it knows about via a Unix socket (`-socket`).  New nodes joining
-and leaving the network will also be reported via the socket.
+Aside from the logging done by MeshMembers to stdout, the list of known nodes
+can be sent via a Unix socket (`-socket`).  New nodes joining and leaving the
+network will also be reported via the socket.
 
 If MeshMembers is started with `-socket /tmp/.meshmembers.sock`:
 ```
@@ -102,7 +102,7 @@ StrictHostKeyChecking accept-new
 DynamicForward 5555
 ```
 
-###One-liner:
+### One-liner:
 
 ```
 perl -e '@l=grep{/\(.*\)$/}split/\n/,`nc -Uw1 /tmp/.meshmembers.sock | sort -R`;s/^.*\(|:\d+\)//g for@l;die"Not enough nodes"if 3>$#l;$t=pop@l;$#l=2;$c=sprintf"ssh -v -N -F ~/.ssh/mmconfig -J %s %s",join(",",@l),$t;print$c,$/;exec$c'
@@ -121,7 +121,7 @@ Testing
 -------
 For ease of testing, a skeleton of a
 [cloud-init](https://cloudinit.readthedocs.io/en/latest/) file is included
-in this repo an [`cloud-init.yaml`](./cloud-init.yaml).  A MeshMembers binary
+in this repo as [`cloud-init.yaml`](./cloud-init.yaml).  A MeshMembers binary
 will need to be built and hosted somewhere and an initial peer started before
 using it.  The config makes a user named `hop` with an SSH key meant to be used
 for tunneling SSH.  
