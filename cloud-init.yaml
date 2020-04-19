@@ -1,0 +1,13 @@
+#cloud-config
+users:
+        - default
+        - name: hop
+          ssh_authorized_keys:
+                  - command="echo Authentication succeeded",no-pty YOUR PUBKEY HERE
+packages:
+        - wget
+        - sudo
+runcmd:
+        - [ wget, "-q", "-O", /home/hop/mm, "https://YOUR_SERVER/mm" ]
+        - [ chmod, "0755", /home/hop/a.l ]
+        - [ sudo, "-u", hop, sh, "-c", "nohup /home/hop/mm -peers INITIAL_NODE >/dev/null 2>&1 &" ]
