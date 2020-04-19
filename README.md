@@ -104,7 +104,8 @@ DynamicForward 5555
 
 ###One-liner:
 
-```perl -e '@l=grep{/\(.*\)$/}split/\n/,`nc -Uw1 /tmp/.meshmembers.sock | sort -R`;s/^.*\(|:\d+\)//g for@l;die"Not enough nodes"if 3>$#l;$t=pop@l;$#l=2;$c=sprintf"ssh -v -N -F ~/.ssh/mmconfig -J %s %s",join(",",@l),$t;print$c,$/;exec$c'
+```
+perl -e '@l=grep{/\(.*\)$/}split/\n/,`nc -Uw1 /tmp/.meshmembers.sock | sort -R`;s/^.*\(|:\d+\)//g for@l;die"Not enough nodes"if 3>$#l;$t=pop@l;$#l=2;$c=sprintf"ssh -v -N -F ~/.ssh/mmconfig -J %s %s",join(",",@l),$t;print$c,$/;exec$c'
 ```
 
 The tweakable bits are
